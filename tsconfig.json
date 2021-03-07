@@ -50,7 +50,7 @@
     "luaLibImport": "require",
     "sourceMapTraceback": false,
     "noHeader": true,
-    "luaBundle": "tstl_output.lua",
+    "luaBundle": "target/tstl_output.lua",
     "luaBundleEntry": "src\\main.ts"
   }
 }

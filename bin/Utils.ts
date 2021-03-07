@@ -1,6 +1,7 @@
 import * as fs from "fs-extra";
 import * as path from "path";
 import { createLogger, format, transports } from "winston";
+const ncp = require('ncp').ncp;
 const { combine, timestamp, printf} = format;
 
 const loggerFormatFunc = printf(({ level, message, timestamp }) => {
@@ -80,4 +81,24 @@ export function getFilesInsideDir(startPath, filter): string[] {
         }
     }
     return retvar;
+}
+
+export function copyFolder(startPath: string, endPath: string) {
+// To copy a folder or file
+    if (!fs.existsSync(startPath)) return;
+    ncp(startPath, endPath, function (err) {
+        if (err) {
+            return buildLogger.error(err);
+        }
+        buildLogger.debug('done!');
+    });
+}
+
+export function toArrayBuffer(b: Buffer): ArrayBuffer {
+    let ab = new ArrayBuffer(b.length);
+    let view = new Uint8Array(ab);
+    for (let i = 0; i < b.length; ++i) {
+        view[i] = b[i];
+    }
+    return ab;
 }

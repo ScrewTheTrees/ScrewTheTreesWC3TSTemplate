@@ -1,4 +1,4 @@
-import {buildConfig, getFilesInsideDir, incrementMajor, incrementMinor, buildLogger} from "./Utils";
+import {buildConfig, getFilesInsideDir, incrementMajor, incrementMinor, buildLogger, copyFolder} from "./Utils";
 import {buildEntireMap} from "./Build";
 
 const fs = require("fs");
@@ -9,38 +9,41 @@ const operation = process.argv[2];
 
 const config = buildConfig;
 
-switch (operation) {
-    case "build":
-        buildEntireMap();
-        break;
-    case "run":
-        const filename = `${cwd}\\target\\${config.mapFolder}`;
+function main() {
+    switch (operation) {
+        case "build":
+            copyFolder(`${cwd}${config.resourceFolder}`, `${cwd}\\target\\${config.mapFolder}`);
+            buildEntireMap();
+            break;
+        case "run":
+            const filename = `${cwd}\\target\\${config.mapFolder}`;
 
-        buildLogger.debug(filename);
+            buildLogger.debug(filename);
 
-        execFile(config.gameExecutable, ["-loadfile", filename, ...config.launchArgs]);
+            execFile(config.gameExecutable, ["-loadfile", filename, ...config.launchArgs]);
 
-        break;
+            break;
 
-    case "incrementMajor":
-        incrementMajor();
-        break;
+        case "incrementMajor":
+            incrementMajor();
+            break;
 
-    case "incrementMinor":
-        incrementMinor();
-        break;
+        case "incrementMinor":
+            incrementMinor();
+            break;
 
 
-    case "regenerateIndex":
-        let dirs = getFilesInsideDir(config.indexDirectory, ".ts")
-        let data = "";
-        for (let dir of dirs) {
-            dir = dir.replace(/\\/g, "/").replace(/\.ts/g, "");
-            data += `export * from "${dir}"\n`;
-        }
+        case "regenerateIndex":
+            let dirs = getFilesInsideDir(config.indexDirectory, ".ts")
+            let data = "";
+            for (let dir of dirs) {
+                dir = dir.replace(/\\/g, "/").replace(/\.ts/g, "");
+                data += `export * from "${dir}"\n`;
+            }
 
-        fs.writeFileSync("./index.ts", data);
-        break;
+            fs.writeFileSync("./index.ts", data);
+            break;
+    }
 }
 
-
+main();
